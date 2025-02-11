@@ -1,79 +1,120 @@
-import React, { useReducer, useState } from 'react'
+import { useReducer, useState } from 'react';
 
-// Reducer function that will contain the different cases
-function reducerFunc (state, action) {
+// Reducer function to handle state updates
+function reducer(state, action) {
   switch (action.type) {
-    case 'populate_modal': 
-      return [...state, action.payload]; 
-    default:
-      return state;
+    case 'submit_form': {
+      // Update the state with the form data when the form is submitted
+      return {
+        ...state,
+        title: action.formData.title,
+        description: action.formData.description,
+        brand: action.formData.brand,
+        link: action.formData.link,
+        tags: action.formData.tags,
+        submitted: true // To track if the form has been submitted
+      };
+    }
+    default: {
+      throw Error('Unknown action: ' + action.type);
+    }
   }
-  
 }
 
-// initial state
-const initialState = { 
-  title: "Shoes", 
-  description: "This brand has a lot of promotion", 
-  brand: "Adidas", 
-  link:"www.adidas.com", 
-  tags: ["Promo", "BlackFriday"]
-}
+const initialState = {
+  title: '',
+  description: '',
+  brand: '',
+  link: '',
+  tags: '',
+  submitted: false // To track if the form has been submitted
+};
 
-// My functional component to be rendered
-function ReducerTestPage() {
-  const [formState, dispatch] = useReducer(reducerFunc, initialState)
-  const [formData, setFormData] = useState({title: "", description: "", brand: "", link: "", tags: ""})
-  
-  // function handling the change in state
-  function handleBtnClick() {
-    dispatch({
-      type: 'populate_modal',
-      payload: formData
+export default function ReducerTestPage() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [formData, setFormData] = useState({ ...initialState }); // Local state to hold form input values
+
+  // Handle input changes
+  function handleInputChange(e) {
+    // Update the local form data state
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
     });
   }
 
-  function handleChange(e) {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // Handle form submission
+  function handleSubmit(e) {
+    e.preventDefault(); // Prevent the default form submission behavior
+    // Dispatch the submit_form action with the current form data
+    dispatch({
+      type: 'submit_form',
+      formData: formData
+    });
+  }
 
   return (
-    <div>
-      <form onsubmit={handleBtnClick()}> 
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" value={formState.name} onChange={handleChange}/>
+    <>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="title">Title:</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value={formData.title} // Use local state for the input value
+          onChange={handleInputChange}
+        />
 
-        <label for="descr">Description:</label>
-        <input type="text" id="descr" name="descr" value={formState.description} onChange={handleChange}/>
+        <label htmlFor="description">Description:</label>
+        <input
+          type="text"
+          id="description"
+          name="description"
+          value={formData.description} // Use local state for the input value
+          onChange={handleInputChange}
+        />
 
-        <label for="brand">brand:</label>
-        <input type="text" id="brand" name="brand" value={formState.brand} onChange={handleChange}/>
+        <label htmlFor="brand">Brand:</label>
+        <input
+          type="text"
+          id="brand"
+          name="brand"
+          value={formData.brand} // Use local state for the input value
+          onChange={handleInputChange}
+        />
 
-        <label for="link">link:</label>
-        <input type="text" id="link" name="link" value={formState.link} onChange={handleChange}/>
+        <label htmlFor="link">Link:</label>
+        <input
+          type="text"
+          id="link"
+          name="link"
+          value={formData.link} // Use local state for the input value
+          onChange={handleInputChange}
+        />
 
-        <label for="tags">tags:</label>
-        <input type="text" id="tags" name="tags" value={formState.tags} onChange={handleChange}/>
+        <label htmlFor="tags">Tags:</label>
+        <input
+          type="text"
+          id="tags"
+          name="tags"
+          value={formData.tags} // Use local state for the input value
+          onChange={handleInputChange}
+        />
 
-        <input type="submit" value="Submit"/>
+        <input type="submit" value="Submit" />
       </form>
 
-      <fieldset>
-        <h3>Are you sure you want to add the following:</h3>
-        <ul>
-          {formState.map((data, index) => (
-            <div>
-              <li key={index}>{data.title}</li>
-              <li key={index}>{data.description}</li>
-              <li key={index}>{data.brand}</li>
-              <li key={index}>{data.link}</li>
-            </div>
-          ))}
-        </ul>
-      </fieldset>
-    </div>
-  )
+      {/* Display the submitted data */}
+      {state.submitted && (
+        <div>
+          <h2>Submitted Data:</h2>
+          <p>Title: {state.title}</p>
+          <p>Description: {state.description}</p>
+          <p>Brand: {state.brand}</p>
+          <p>Link: {state.link}</p>
+          <p>Tags: {state.tags}</p>
+        </div>
+      )}
+    </>
+  );
 }
-
-export default ReducerTestPage
-

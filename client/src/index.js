@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import Navbar from './components/Navbar/Navbar';
 import {BrowserRouter, Routes, Route } from 'react-router'
 import ReducerTestPage from './pages/ReducerTestPage';
 // import Footer from './components/Footer/Footer';
