@@ -3,17 +3,15 @@ import './App.css';
 import Items from './components/Items/Items';
 import Navbar from './components/Navbar/Navbar';
 import Sidebar from './components/Sidebar/Sidebar';
+import Card from './components/Card/Card';
+import { dummyProducts } from './dummyProducts';
 
 function App() {
   return (
     <div className="App">
       <Navbar/>
       <header className="App-header">
-        <Items>
-          {/* for (let index = 0; index < array.length; index++) {
-            <Item/>
-          } */}
-        </Items>
+        <Items/>
         <Sidebar/>
       </header>
     </div>

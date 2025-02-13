@@ -1,4 +1,5 @@
 import { useReducer, useState } from 'react';
+import Card from '../components/Card/Card';
 
 // Reducer function to handle state updates
 function reducer(state, action) {
@@ -26,7 +27,7 @@ const initialState = {
   description: '',
   brand: '',
   link: '',
-  tags: '',
+  tags: [], // Initialize tags as an empty array
   submitted: false // To track if the form has been submitted
 };
 
@@ -36,11 +37,26 @@ export default function ReducerTestPage() {
 
   // Handle input changes
   function handleInputChange(e) {
-    // Update the local form data state
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+
+    // If the input is for tags, split the value by commas and trim whitespace
+    if (name === 'tags') {
+      const tagsArray = value
+        .split(',') // Split by commas
+        .map((tag) => tag.trim()) // Trim whitespace from each tag
+        .filter((tag) => tag !== ''); // Remove empty strings
+
+      setFormData({
+        ...formData,
+        [name]: tagsArray, // Store tags as an array
+      });
+    } else {
+      // For other fields, update the state as usual
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   }
 
   // Handle form submission
@@ -49,7 +65,7 @@ export default function ReducerTestPage() {
     // Dispatch the submit_form action with the current form data
     dispatch({
       type: 'submit_form',
-      formData: formData
+      formData: formData,
     });
   }
 
@@ -92,12 +108,12 @@ export default function ReducerTestPage() {
           onChange={handleInputChange}
         />
 
-        <label htmlFor="tags">Tags:</label>
+        <label htmlFor="tags">Tags (comma-separated):</label>
         <input
           type="text"
           id="tags"
           name="tags"
-          value={formData.tags} // Use local state for the input value
+          value={formData.tags.join(', ')} // Display tags as a comma-separated string
           onChange={handleInputChange}
         />
 
@@ -107,12 +123,7 @@ export default function ReducerTestPage() {
       {/* Display the submitted data */}
       {state.submitted && (
         <div>
-          <h2>Submitted Data:</h2>
-          <p>Title: {state.title}</p>
-          <p>Description: {state.description}</p>
-          <p>Brand: {state.brand}</p>
-          <p>Link: {state.link}</p>
-          <p>Tags: {state.tags}</p>
+          <Card cardInfo={state}/>
         </div>
       )}
     </>
